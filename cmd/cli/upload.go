@@ -13,7 +13,7 @@ import (
 
 const (
 	// BuckName todo
-	defaultBuckName = ""
+	defaultBuckName = "devcloud-station"
 	defaultEndpoint = ""
 	defaultALIAK    = ""
 	defaultALISK    = ""
@@ -72,6 +72,5 @@ func getProvider() (p oss.Provider, err error) {
 func init() {
 	uploadCmd.PersistentFlags().StringVarP(&uploadFilePath, "file_path", "f", "", "upload file path")
 	uploadCmd.PersistentFlags().StringVarP(&buckName, "bucket_name", "b", defaultBuckName, "upload oss bucket name")
-	uploadCmd.PersistentFlags().StringVarP(&bucketEndpoint, "bucket_endpoint", "e", defaultEndpoint, "upload oss endpoint")
 	RootCmd.AddCommand(uploadCmd)
 }

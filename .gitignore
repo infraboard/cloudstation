@@ -5,6 +5,9 @@
 *.so
 *.dylib
 
+# 敏感配置
+etc/.secret.env
+
 # Test binary, built with `go test -c`
 *.test
 

@@ -11,11 +11,10 @@ import (
 )
 
 var (
-	vers            bool
-	ossProvider     string
-	aliEndpointType string
-	aliAccessID     string
-	aliAccessKey    string
+	vers         bool
+	ossProvider  string
+	aliAccessID  string
+	aliAccessKey string
 )
 
 // RootCmd represents the base command when called without any subcommands
@@ -41,9 +40,21 @@ func Execute() {
 	}
 }
 
+func LoadFromEnv() {
+	aliAccessID = os.Getenv("ALI_AK")
+	aliAccessKey = os.Getenv("ALI_SK")
+	bucketEndpoint = os.Getenv("ALI_OSS_ENDPOINT")
+}
+
 func init() {
 	RootCmd.PersistentFlags().StringVarP(&ossProvider, "oss_provider", "p", "ali", "the oss provider [ali/tx]")
 	RootCmd.PersistentFlags().StringVarP(&aliAccessID, "ali_access_id", "i", "", "the ali oss access id")
 	RootCmd.PersistentFlags().StringVarP(&aliAccessKey, "ali_access_key", "k", "", "the ali oss access key")
+	uploadCmd.PersistentFlags().StringVarP(&bucketEndpoint, "bucket_endpoint", "e", defaultEndpoint, "upload oss endpoint")
 	RootCmd.PersistentFlags().BoolVarP(&vers, "version", "v", false, "the cloud-station-cli version")
+
+	// 从环境变量中加载
+	if aliAccessID == "" && aliAccessKey == "" {
+		LoadFromEnv()
+	}
 }

@@ -1,9 +1,11 @@
-PROJECT_NAME=cloud-station
+PROJECT_NAME=cloudstation
 MAIN_FILE=cmd/cli.go
 PKG := "github.com/infraboard/$(PROJECT_NAME)"
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
+
 .PHONY: all dep lint vet test test-coverage build clean
+
 all: build
 dep: ## Get the dependencies
 	@go mod download
