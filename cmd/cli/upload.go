@@ -2,7 +2,10 @@ package cli
 
 import (
 	"fmt"
+	"net"
+	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -38,15 +41,46 @@ var uploadCmd = &cobra.Command{
 		if uploadFilePath == "" {
 			return fmt.Errorf("upload file path is missing")
 		}
+
+		// 为了防止文件都堆在一个文件夹里面 无法查看
+		// 我们采用日期进行编码
 		day := time.Now().Format("20060102")
+
+		// 为了防止不同用户同一时间上传相同的文件
+		// 我们采用用户的主机名作为前置
+		hn, err := os.Hostname()
+		if err != nil {
+			ipAddr := getOutBindIp()
+			if ipAddr == "" {
+				hn = "unknown"
+			} else {
+				hn = ipAddr
+			}
+		}
+
 		fn := path.Base(uploadFilePath)
-		ok := fmt.Sprintf("%s/%s", day, fn)
+		ok := fmt.Sprintf("%s/%s/%s", day, hn, fn)
 		err = p.UploadFile(buckName, ok, uploadFilePath)
 		if err != nil {
 			return err
 		}
 		return nil
 	},
+}
+
+func getOutBindIp() string {
+	conn, err := net.Dial("udp", "baidu.com:80")
+	if err != nil {
+		return ""
+	}
+	defer conn.Close()
+
+	addr := strings.Split(conn.LocalAddr().String(), ":")
+	if len(addr) == 0 {
+		return ""
+	}
+
+	return addr[0]
 }
 
 func getProvider() (p oss.Provider, err error) {
